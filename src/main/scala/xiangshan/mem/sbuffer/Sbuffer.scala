@@ -698,6 +698,7 @@ class Sbuffer(implicit p: Parameters) extends DCacheModule with HasSbufferConst 
       difftest.io.sbufferAddr := RegNext(getAddr(ptag(dcache_resp_id)))
       difftest.io.sbufferData := RegNext(data(dcache_resp_id).asTypeOf(Vec(CacheLineBytes, UInt(8.W))))
       difftest.io.sbufferMask := RegNext(mask(dcache_resp_id).asUInt)
+      difftest.io.cycleCnt := GTimer()
     }}
   }
 

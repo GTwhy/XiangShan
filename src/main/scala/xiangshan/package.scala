@@ -66,8 +66,8 @@ package object xiangshan {
     def fmisc        = "b1011".U
     def fDivSqrt     = "b1010".U
 
-    def ldu          = "b1100".U
-    def stu          = "b1101".U
+    def ldu          = "b1100".U // LoadEvent fyTy == 0xC
+    def stu          = "b1101".U // StoreEvent fyTy == 0xD
     def mou          = "b1111".U // for amo, lr, sc, fence
 
     def X            = BitPat("b????")

@@ -1036,7 +1036,7 @@ class RobImp(outer: Rob)(implicit p: Parameters) extends LazyModuleImp(outer)
       difftest.io.fpwen    := RegNext(RegNext(RegNext(io.commits.commitValid(i) && io.commits.info(i).fpWen)))
       difftest.io.wpdest   := RegNext(RegNext(RegNext(io.commits.info(i).pdest)))
       difftest.io.wdest    := RegNext(RegNext(RegNext(io.commits.info(i).ldest)))
-
+      difftest.io.cycleCnt := timer
       // // runahead commit hint
       // val runahead_commit = Module(new DifftestRunaheadCommitEvent)
       // runahead_commit.io.clock := clock
@@ -1102,6 +1102,7 @@ class RobImp(outer: Rob)(implicit p: Parameters) extends LazyModuleImp(outer)
       difftest.io.paddr  := RegNext(RegNext(RegNext(exuOut.paddr)))
       difftest.io.opType := RegNext(RegNext(RegNext(uop.ctrl.fuOpType)))
       difftest.io.fuType := RegNext(RegNext(RegNext(uop.ctrl.fuType)))
+      difftest.io.cycleCnt := timer
     }
   }
 

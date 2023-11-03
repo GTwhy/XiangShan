@@ -54,7 +54,7 @@ endif
 
 # emu for the release version
 RELEASE_ARGS = --disable-all --remove-assert --fpga-platform
-DEBUG_ARGS   = --enable-difftest
+DEBUG_ARGS   = --enable-difftest --enable-log
 ifeq ($(RELEASE),1)
 override SIM_ARGS += $(RELEASE_ARGS)
 else
@@ -73,7 +73,7 @@ AWK_CMD = gawk -i inplace 'BEGIN{f=0} /FILE "firrtl_black_box_resource_files.f"/
 .DEFAULT_GOAL = verilog
 
 help:
-	mill -i XiangShan.runMain $(FPGATOP) --help
+	mill -i XiangShan.runMain $(SIMTOP) --help
 
 $(TOP_V): $(SCALA_FILE)
 	mkdir -p $(@D)

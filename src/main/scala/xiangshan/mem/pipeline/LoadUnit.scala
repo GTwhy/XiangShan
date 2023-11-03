@@ -1172,6 +1172,26 @@ class LoadUnit(implicit p: Parameters) extends XSModule
   // hareware prefetch to l1
   io.prefetch_req <> load_s0.io.prefetch_in
 
+// import difftest._
+
+//   if (env.EnableDifftest) {
+//     for (i <- 0 until EnsbufferWidth) {
+//       val loadComplete = io.ldout.fire();
+//       val paddr = SignExt(io.ldout.bits.debug.paddr, 64)
+//       val data = io.ldout.bits.data
+
+//       val difftest = Module(new DifftestLoadCompleteEvent)
+//       difftest.io.clock       := clock
+//       difftest.io.coreid      := io.hartId
+//       difftest.io.index       := i.U
+//       difftest.io.valid       := RegNext(RegNext(storeCommit))
+//       difftest.io.storeAddr   := RegNext(RegNext(waddr))
+//       difftest.io.storeData   := RegNext(RegNext(wdata))
+//       difftest.io.storeMask   := RegNext(RegNext(wmask))
+//     }
+//   }
+
+
   // trigger
   val lastValidData = RegEnable(io.ldout.bits.data, io.ldout.fire)
   val hitLoadAddrTriggerHitVec = Wire(Vec(3, Bool()))
