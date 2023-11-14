@@ -197,6 +197,7 @@ class MemBlockImp(outer: MemBlock) extends LazyModuleImp(outer)
   loadUnits.foreach(load_unit => {
     load_unit.io.prefetch_req.valid <> l1_pf_req.valid
     load_unit.io.prefetch_req.bits <> l1_pf_req.bits
+    load_unit.io.hartId := io.hartId
   })
   // when loadUnits(0) stage 0 is busy, hw prefetch will never use that pipeline
   loadUnits(0).io.prefetch_req.bits.confidence := 0.U
@@ -327,6 +328,7 @@ class MemBlockImp(outer: MemBlock) extends LazyModuleImp(outer)
 
   // LoadUnit
   for (i <- 0 until exuParameters.LduCnt) {
+    loadUnits(i).io.index := i.U
     loadUnits(i).io.redirect <> redirect
     loadUnits(i).io.rsIdx := DontCare
     loadUnits(i).io.isFirstIssue := DontCare

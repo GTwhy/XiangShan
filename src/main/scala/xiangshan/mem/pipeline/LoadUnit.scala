@@ -27,6 +27,7 @@ import xiangshan.backend.fu.PMPRespBundle
 import xiangshan.cache._
 import xiangshan.cache.dcache.ReplayCarry
 import xiangshan.cache.mmu.{TlbCmd, TlbReq, TlbRequestIO, TlbResp}
+import difftest._
 
 class LoadToLsqFastIO(implicit p: Parameters) extends XSBundle {
   val valid = Output(Bool())
@@ -807,6 +808,8 @@ class LoadUnit(implicit p: Parameters) extends XSModule
   with HasDCacheParameters
 {
   val io = IO(new Bundle() {
+    val hartId = Input(UInt(8.W))
+    val index = Input(UInt(8.W))
     val ldin = Flipped(Decoupled(new ExuInput))
     val ldout = Decoupled(new ExuOutput)
     val redirect = Flipped(ValidIO(new Redirect))
@@ -1171,26 +1174,31 @@ class LoadUnit(implicit p: Parameters) extends XSModule
 
   // hareware prefetch to l1
   io.prefetch_req <> load_s0.io.prefetch_in
+  
+  val diff_len = LookupTree(io.ldout.bits.uop.ctrl.fuOpType(1, 0), List(
+    "b00".U   -> 1.U, //b
+    "b01".U   -> 2.U, //h
+    "b10".U   -> 4.U, //w
+    "b11".U   -> 8.U  //d
+  ))
 
-// import difftest._
+  if (env.EnableDifftest) {
+    val valid = io.ldout.fire
+    val paddr = SignExt(io.ldout.bits.debug.paddr, 64)
+    val data = io.ldout.bits.data
+    // TODO: replace with real mask
+    val len = diff_len;
 
-//   if (env.EnableDifftest) {
-//     for (i <- 0 until EnsbufferWidth) {
-//       val loadComplete = io.ldout.fire();
-//       val paddr = SignExt(io.ldout.bits.debug.paddr, 64)
-//       val data = io.ldout.bits.data
-
-//       val difftest = Module(new DifftestLoadCompleteEvent)
-//       difftest.io.clock       := clock
-//       difftest.io.coreid      := io.hartId
-//       difftest.io.index       := i.U
-//       difftest.io.valid       := RegNext(RegNext(storeCommit))
-//       difftest.io.storeAddr   := RegNext(RegNext(waddr))
-//       difftest.io.storeData   := RegNext(RegNext(wdata))
-//       difftest.io.storeMask   := RegNext(RegNext(wmask))
-//     }
-//   }
-
+    val difftest = Module(new DifftestLoadLocalEvent)
+    difftest.io.clock       := clock
+    difftest.io.coreid      := io.hartId
+    difftest.io.index       := io.index
+    difftest.io.valid       := valid
+    difftest.io.paddr       := paddr
+    difftest.io.loadData    := data
+    difftest.io.loadMask    := diff_len
+    difftest.io.cycleCnt    := GTimer()
+  }
 
   // trigger
   val lastValidData = RegEnable(io.ldout.bits.data, io.ldout.fire)
