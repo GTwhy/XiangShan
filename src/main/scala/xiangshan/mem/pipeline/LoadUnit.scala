@@ -1191,11 +1191,11 @@ class LoadUnit(implicit p: Parameters) extends XSModule
     difftest.io.clock       := clock
     difftest.io.coreid      := io.hartId
     difftest.io.index       := io.index
-    difftest.io.valid       := RegNext(RegNext(RegNext(RegNext(RegNext(valid)))))
-    difftest.io.paddr       := RegNext(RegNext(RegNext(RegNext(RegNext(paddr)))))
-    difftest.io.loadData    := RegNext(RegNext(RegNext(RegNext(RegNext(data)))))
-    difftest.io.loadMask    := RegNext(RegNext(RegNext(RegNext(RegNext(diff_len)))))
-    difftest.io.x           := RegNext(RegNext(RegNext(RegNext(RegNext(io.ldout.bits.uop.robIdx.value)))))
+    difftest.io.valid       := valid
+    difftest.io.paddr       := paddr
+    difftest.io.loadData    := data
+    difftest.io.loadMask    := diff_len
+    difftest.io.x           := io.ldout.bits.uop.robIdx.value
     difftest.io.cycleCnt    := GTimer()
   }
 
