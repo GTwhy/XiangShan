@@ -1183,20 +1183,19 @@ class LoadUnit(implicit p: Parameters) extends XSModule
   ))
 
   if (env.EnableDifftest) {
-    val valid = io.ldout.fire
+    val valid = io.ldout.fire()
     val paddr = SignExt(io.ldout.bits.debug.paddr, 64)
     val data = io.ldout.bits.data
-    // TODO: replace with real mask
-    val len = diff_len;
 
     val difftest = Module(new DifftestLoadLocalEvent)
     difftest.io.clock       := clock
     difftest.io.coreid      := io.hartId
     difftest.io.index       := io.index
-    difftest.io.valid       := valid
-    difftest.io.paddr       := paddr
-    difftest.io.loadData    := data
-    difftest.io.loadMask    := diff_len
+    difftest.io.valid       := RegNext(RegNext(RegNext(RegNext(RegNext(valid)))))
+    difftest.io.paddr       := RegNext(RegNext(RegNext(RegNext(RegNext(paddr)))))
+    difftest.io.loadData    := RegNext(RegNext(RegNext(RegNext(RegNext(data)))))
+    difftest.io.loadMask    := RegNext(RegNext(RegNext(RegNext(RegNext(diff_len)))))
+    difftest.io.x           := RegNext(RegNext(RegNext(RegNext(RegNext(io.ldout.bits.uop.robIdx.value)))))
     difftest.io.cycleCnt    := GTimer()
   }
 

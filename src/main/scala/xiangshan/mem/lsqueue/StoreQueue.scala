@@ -637,21 +637,15 @@ class StoreQueue(implicit p: Parameters) extends XSModule
   }
 
   if (env.EnableDifftest) {
-    for (i <- 0 until EnsbufferWidth) {
-      // val storeCommit = io.sbuffer(i).fire()
-      val storeCommit = false.B
-      val waddr = SignExt(io.sbuffer(i).bits.addr, 64)
-      val wdata = io.sbuffer(i).bits.data & MaskExpand(io.sbuffer(i).bits.mask)
-      val wmask = io.sbuffer(i).bits.mask
-
+    for (i <- 0 until StoreQueueSize) {
       val difftest = Module(new DifftestXEvent)
       difftest.io.clock       := clock
       difftest.io.coreid      := io.hartId
       difftest.io.index       := i.U
-      difftest.io.valid       := RegNext(RegNext(storeCommit))
-      difftest.io.storeAddr   := RegNext(RegNext(waddr))
-      difftest.io.storeData   := RegNext(RegNext(wdata))
-      difftest.io.storeMask   := RegNext(RegNext(wmask))
+      difftest.io.valid       := allocated(i) && datavalid(i) && addrvalid(i) && committed(i)
+      difftest.io.storeAddr   := debug_paddr(i)
+      difftest.io.storeData   := debug_data(i)
+      difftest.io.storeMask   := committed(i)
     }
   }
 

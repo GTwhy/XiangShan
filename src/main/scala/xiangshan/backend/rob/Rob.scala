@@ -1102,6 +1102,7 @@ class RobImp(outer: Rob)(implicit p: Parameters) extends LazyModuleImp(outer)
       difftest.io.paddr  := RegNext(RegNext(RegNext(exuOut.paddr)))
       difftest.io.opType := RegNext(RegNext(RegNext(uop.ctrl.fuOpType)))
       difftest.io.fuType := RegNext(RegNext(RegNext(uop.ctrl.fuType)))
+      difftest.io.x := RegNext(RegNext(RegNext(uop.robIdx.value)))
       difftest.io.cycleCnt := timer
     }
   }

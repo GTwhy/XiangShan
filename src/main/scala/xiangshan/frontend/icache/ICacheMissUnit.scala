@@ -370,6 +370,7 @@ class ICacheMissUnit(edge: TLEdgeOut)(implicit p: Parameters) extends ICacheMiss
     difftest.io.valid := refill_arb.io.out.valid
     difftest.io.addr := refill_arb.io.out.bits.paddr
     difftest.io.data := refill_arb.io.out.bits.data.asTypeOf(difftest.io.data)
+    difftest.io.cycleCnt := GTimer()
   }
 
   (0 until nWays).map{ w =>

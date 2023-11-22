@@ -750,6 +750,7 @@ class MissQueue(edge: TLEdgeOut)(implicit p: Parameters) extends DCacheModule wi
     difftest.io.valid := io.refill_to_ldq.valid && io.refill_to_ldq.bits.hasdata && io.refill_to_ldq.bits.refill_done
     difftest.io.addr := io.refill_to_ldq.bits.addr
     difftest.io.data := io.refill_to_ldq.bits.data_raw.asTypeOf(difftest.io.data)
+    difftest.io.cycleCnt:= GTimer()
   }
 
   // Perf count
