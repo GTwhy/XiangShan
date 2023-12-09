@@ -623,6 +623,8 @@ class StoreQueue(implicit p: Parameters) extends XSModule
       val waddr = SignExt(io.sbuffer(i).bits.addr, 64)
       val wdata = io.sbuffer(i).bits.data & MaskExpand(io.sbuffer(i).bits.mask)
       val wmask = io.sbuffer(i).bits.mask
+      val sqidx = dataBuffer.io.deq(i).bits.sqPtr.value
+      val robidx = uop(sqidx).robIdx.value
 
       val difftest = Module(new DifftestStoreEvent)
       difftest.io.clock       := clock
@@ -632,6 +634,7 @@ class StoreQueue(implicit p: Parameters) extends XSModule
       difftest.io.storeAddr   := RegNext(RegNext(waddr))
       difftest.io.storeData   := RegNext(RegNext(wdata))
       difftest.io.storeMask   := RegNext(RegNext(wmask))
+      difftest.io.x           := RegNext(RegNext(robidx))
       difftest.io.cycleCnt    := GTimer()
     }
   }

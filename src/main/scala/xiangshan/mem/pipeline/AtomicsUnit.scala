@@ -438,6 +438,8 @@ class AtomicsUnit(implicit p: Parameters) extends XSModule with MemoryOpConstant
     io.out.bits.uop.cf.trigger.backendHit(4) := backendTriggerHitReg(4)
   }
 
+  val timer = GTimer()
+
   if (env.EnableDifftest) {
     val difftest = Module(new DifftestAtomicEvent)
     difftest.io.clock      := clock
@@ -448,6 +450,7 @@ class AtomicsUnit(implicit p: Parameters) extends XSModule with MemoryOpConstant
     difftest.io.atomicMask := mask_reg
     difftest.io.atomicFuop := fuop_reg
     difftest.io.atomicOut  := resp_data_wire
+    difftest.io.cycleCnt   := timer
   }
 
   if (env.EnableDifftest || env.AlwaysBasicDiff) {
@@ -458,5 +461,6 @@ class AtomicsUnit(implicit p: Parameters) extends XSModule with MemoryOpConstant
     difftest.io.valid := io.out.fire &&
       (uop.ctrl.fuOpType === LSUOpType.sc_d || uop.ctrl.fuOpType === LSUOpType.sc_w)
     difftest.io.success := is_lrsc_valid
+    difftest.io.cycleCnt   := timer
   }
 }
