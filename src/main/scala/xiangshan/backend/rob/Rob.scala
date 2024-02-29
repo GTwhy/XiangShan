@@ -1036,6 +1036,13 @@ class RobImp(outer: Rob)(implicit p: Parameters) extends LazyModuleImp(outer)
       difftest.io.fpwen    := RegNext(RegNext(RegNext(io.commits.commitValid(i) && io.commits.info(i).fpWen)))
       difftest.io.wpdest   := RegNext(RegNext(RegNext(io.commits.info(i).pdest)))
       difftest.io.wdest    := RegNext(RegNext(RegNext(io.commits.info(i).ldest)))
+      difftest.io.psrc0    := RegNext(RegNext(RegNext(uop.psrc(0))))
+      difftest.io.psrc1    := RegNext(RegNext(RegNext(uop.psrc(1))))
+      difftest.io.psrc2    := RegNext(RegNext(RegNext(uop.psrc(2))))
+      // when srctype == reg, then src is from regfile, otherwise set lsrc to 0
+      difftest.io.lsrc0    := RegNext(RegNext(RegNext(Mux(uop.ctrl.srcType(0) === SrcType.reg, uop.ctrl.lsrc(0), 0.U))))
+      difftest.io.lsrc1    := RegNext(RegNext(RegNext(Mux(uop.ctrl.srcType(1) === SrcType.reg, uop.ctrl.lsrc(1), 0.U))))
+      difftest.io.lsrc2    := RegNext(RegNext(RegNext(Mux(uop.ctrl.srcType(2) === SrcType.reg, uop.ctrl.lsrc(2), 0.U))))
       difftest.io.cycleCnt := timer
       // // runahead commit hint
       // val runahead_commit = Module(new DifftestRunaheadCommitEvent)
