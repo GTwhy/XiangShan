@@ -439,6 +439,9 @@ class AtomicsUnit(implicit p: Parameters) extends XSModule with MemoryOpConstant
   }
 
   val timer = GTimer()
+  // Atom insts need aq/rl bits for mcm check
+  val aq = in.uop.cf.instr(26).asUInt
+  val rl = in.uop.cf.instr(25).asUInt 
 
   if (env.EnableDifftest) {
     val difftest = Module(new DifftestAtomicEvent)
@@ -450,6 +453,7 @@ class AtomicsUnit(implicit p: Parameters) extends XSModule with MemoryOpConstant
     difftest.io.atomicMask := mask_reg
     difftest.io.atomicFuop := fuop_reg
     difftest.io.atomicOut  := resp_data_wire
+    difftest.io.x          := in.uop.robIdx.value | rl << 21 | aq << 22
     difftest.io.cycleCnt   := timer
   }
 
